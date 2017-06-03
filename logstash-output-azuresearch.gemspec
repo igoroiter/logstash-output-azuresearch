@@ -2,11 +2,11 @@ Gem::Specification.new do |s|
   s.name          = 'logstash-output-azuresearch'
   s.version       = '0.1.0'
   s.licenses      = ['Apache License (2.0)']
-  s.summary       = 'TODO: Write a short summary, because Rubygems requires one.'
-  s.description   = 'TODO: Write a longer description or delete this line.'
-  s.homepage      = 'TODO: Put your plugin''s website or public repo URL here.'
+  s.summary       = 'little hui'
+  s.description   = 'little huilittle huilittle huilittle hui'
+  s.homepage      = 'http://hui.com'
   s.authors       = ['Igor Roiter']
-  s.email         = 'igoro@datazone.io'
+  s.email         = 'igor.roiter@gmail.com'
   s.require_paths = ['lib']
 
   # Files
@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.metadata = { "logstash_plugin" => "true", "logstash_group" => "output" }
 
   # Gem dependencies
+  s.add_runtime_dependency "rest-client", "1.8.0"
   s.add_runtime_dependency "logstash-core-plugin-api", "~> 2.0"
   s.add_runtime_dependency "logstash-codec-plain"
   s.add_development_dependency "logstash-devutils"
