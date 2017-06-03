@@ -1,94 +1,86 @@
-# Azure Search output plugin for Logstash
+# Logstash Plugin
 
-logstash-output-azuresearch is a logstash plugin to output to Azure Search. [Logstash](https://www.elastic.co/products/logstash) is an open source, server-side data processing pipeline that ingests data from a multitude of sources simultaneously, transforms it, and then sends it to your favorite [destinations](https://www.elastic.co/products/logstash). [Azure Search](https://docs.microsoft.com/en-us/azure/search/search-what-is-azure-search) is a managed cloud search service provided in Microsoft Azure.
+This is a plugin for [Logstash](https://github.com/elastic/logstash).
 
-## Installation
+It is fully free and fully open source. The license is Apache 2.0, meaning you are pretty much free to use it however you want in whatever way.
 
-You can install this plugin using the Logstash "plugin" or "logstash-plugin" (for newer versions of Logstash) command:
-```
-bin/plugin install logstash-output-azuresearch
-# or
-bin/logstash-plugin install logstash-output-azuresearch  (Newer versions of Logstash)
-```
-Please see [Logstash reference](https://www.elastic.co/guide/en/logstash/current/offline-plugins.html) for more information.
+## Documentation
 
-## Configuration
+Logstash provides infrastructure to automatically generate documentation for this plugin. We use the asciidoc format to write documentation so any comments in the source code will be first converted into asciidoc and then into html. All plugin documentation are placed under one [central location](http://www.elastic.co/guide/en/logstash/current/).
 
-```
-output {
-    azuresearch {
-        endpoint => "https://<YOUR ACCOUNT>.search.windows.net"
-        api_key => "<AZURESEARCH API KEY>"
-        search_index => "<SEARCH INDEX NAME>"
-        column_names => ['col1','col2','col3'..]  ##  ## list of column names (array)
-        key_names => ['key1','key2','key3'..] ## list of Key names (array)
-        flush_items => <FLUSH_ITEMS_NUM>
-        flush_interval_time => <FLUSH INTERVAL TIME(sec)>
-   }
-}
-```
+- For formatting code or config example, you can use the asciidoc `[source,ruby]` directive
+- For more asciidoc formatting tips, see the excellent reference here https://github.com/elastic/docs#asciidoc-guide
 
- * **endpoint (required)** - Azure Search service endpoint URI
- * **api\_key (required)** - Azure Search API key
- * **search\_index (required)** - Azure Search Index name to insert records
- * **column\_names (required)** - List of column names (array) in a target Azure search index. 1st item in column_names should be primary key
- * **key\_names (optional)** - Default:[] (empty array). List of key names (array) in in-coming record to insert. The number of keys in key_names must be equal to the one of columns in column_names. Also the order or each item in key_names must match the one of each items in column_names.
- * **flush_items (optional)** - Default 50. Max number of items to buffer before flushing (1 - 1000).
- * **flush_interval_time (optional)** - Default 5. Max number of seconds to wait between flushes.
+## Need Help?
 
-## Tests
+Need help? Try #logstash on freenode IRC or the https://discuss.elastic.co/c/logstash discussion forum.
 
-Here is an example configuration where Logstash's event source and destination are configured as standard input and Azure Search respectively.
+## Developing
 
-### Example Configuration
-```
-input {
-    stdin {
-        codec => json_lines
-    }
-}
+### 1. Plugin Developement and Testing
 
-output {
-    azuresearch {
-        endpoint => "https://<YOUR ACCOUNT>.search.windows.net"
-        api_key => "<AZURESEARCH API KEY>"
-        search_index => "<SEARCH INDEX NAME>"
-        column_names => ['id','user_name','message','created_at']
-        key_names => ['postid','user','content','posttime']
-        flush_items => 100
-        flush_interval_time => 5
-    }
-}
-```
-You can find example configuration files in logstash-output-azuresearch/examples.
+#### Code
+- To get started, you'll need JRuby with the Bundler gem installed.
 
-### Run the plugin with the example configuration
+- Create a new plugin or clone and existing from the GitHub [logstash-plugins](https://github.com/logstash-plugins) organization. We also provide [example plugins](https://github.com/logstash-plugins?query=example).
 
-Now you run logstash with the the example configuration like this:
-```
-# Test your logstash configuration before actually running the logstash
-bin/logstash -f logstash-stdin-json-to-azuresearch.conf --configtest
-# run
-bin/logstash -f logstash-stdin-json-to-azuresearch.conf
+- Install dependencies
+```sh
+bundle install
 ```
 
-Here is an expected output for sample input (JSON Lines):
+#### Test
 
-<u>JSON Lines</u>
+- Update your dependencies
+
+```sh
+bundle install
 ```
-{ "id": "a001", "user_name": "user001", "message":"msg001", "created_at":"2016-12-28T00:01:00Z" },
-{ "id": "a002", "user_name": "user002", "message":"msg002", "created_at":"2016-12-28T00:02:00Z" },
-{ "id": "a003", "user_name": "user003", "message":"msg003", "created_at":"2016-12-28T00:03:00Z" },
+
+- Run tests
+
+```sh
+bundle exec rspec
 ```
-<u>Output (Azure Search POST message)</u>
+
+### 2. Running your unpublished Plugin in Logstash
+
+#### 2.1 Run in a local Logstash clone
+
+- Edit Logstash `Gemfile` and add the local plugin path, for example:
+```ruby
+gem "logstash-filter-awesome", :path => "/your/local/logstash-filter-awesome"
 ```
-"value": [
-    { "@search.score": 1, "id": "a001", "user_name": "user001", "message": "msg001", "created_at": "2016-12-28T00:01:00Z" },
-    { "@search.score": 1, "id": "a002", "user_name": "user002", "message": "msg002", "created_at": "2016-12-28T00:02:00Z" },
-    { "@search.score": 1, "id": "a003", "user_name": "user003", "message": "msg003", "created_at": "2016-12-28T00:03:00Z" }
-]
+- Install plugin
+```sh
+bin/logstash-plugin install --no-verify
 ```
+- Run Logstash with your plugin
+```sh
+bin/logstash -e 'filter {awesome {}}'
+```
+At this point any modifications to the plugin code will be applied to this local Logstash setup. After modifying the plugin, simply rerun Logstash.
+
+#### 2.2 Run in an installed Logstash
+
+You can use the same **2.1** method to run your plugin in an installed Logstash by editing its `Gemfile` and pointing the `:path` to your local plugin development directory or you can build the gem and install it using:
+
+- Build your plugin gem
+```sh
+gem build logstash-filter-awesome.gemspec
+```
+- Install the plugin from the Logstash home
+```sh
+bin/logstash-plugin install /your/local/plugin/logstash-filter-awesome.gem
+```
+- Start Logstash and proceed to test the plugin
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/yokawasa/logstash-output-azuresearch.
+All contributions are welcome: ideas, patches, documentation, bug reports, complaints, and even something you drew up on a napkin.
+
+Programming is not a required skill. Whatever you've seen about open source and maintainers or community members  saying "send patches or die" - you will not see that here.
+
+It is more important to the community that you are able to contribute.
+
+For more information about contributing, see the [CONTRIBUTING](https://github.com/elastic/logstash/blob/master/CONTRIBUTING.md) file.

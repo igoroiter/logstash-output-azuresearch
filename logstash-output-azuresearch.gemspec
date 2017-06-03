@@ -1,16 +1,16 @@
 Gem::Specification.new do |s|
-  s.name = 'logstash-output-azuresearch'
-  s.version    =  File.read("VERSION").strip
-  s.authors = ["Yoichi Kawasaki"]
-  s.email = "yoichi.kawasaki@outlook.com"
-  s.summary = %q{logstash output plugin to store events into Azure Search}
-  s.description = s.summary
-  s.homepage = "http://github.com/yokawasa/logstash-output-azuresearch"
-  s.licenses = ["Apache License (2.0)"]
-  s.require_paths = ["lib"]
+  s.name          = 'logstash-output-azuresearch'
+  s.version       = '0.1.0'
+  s.licenses      = ['Apache License (2.0)']
+  s.summary       = 'TODO: Write a short summary, because Rubygems requires one.'
+  s.description   = 'TODO: Write a longer description or delete this line.'
+  s.homepage      = 'TODO: Put your plugin''s website or public repo URL here.'
+  s.authors       = ['Igor Roiter']
+  s.email         = 'igoro@datazone.io'
+  s.require_paths = ['lib']
 
   # Files
-  s.files = Dir['lib/**/*','spec/**/*','vendor/**/*','*.gemspec','*.md','CONTRIBUTORS','Gemfile','LICENSE','NOTICE.TXT', 'VERSION']
+  s.files = Dir['lib/**/*','spec/**/*','vendor/**/*','*.gemspec','*.md','CONTRIBUTORS','Gemfile','LICENSE','NOTICE.TXT']
    # Tests
   s.test_files = s.files.grep(%r{^(test|spec|features)/})
 
@@ -18,8 +18,7 @@ Gem::Specification.new do |s|
   s.metadata = { "logstash_plugin" => "true", "logstash_group" => "output" }
 
   # Gem dependencies
-  s.add_runtime_dependency "rest-client", "1.8.0"
-  s.add_runtime_dependency "logstash-core", ">= 2.0.0", "< 3.0.0"
+  s.add_runtime_dependency "logstash-core-plugin-api", "~> 2.0"
   s.add_runtime_dependency "logstash-codec-plain"
   s.add_development_dependency "logstash-devutils"
 end
